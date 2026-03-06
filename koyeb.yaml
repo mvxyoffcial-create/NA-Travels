@@ -1,0 +1,29 @@
+# Koyeb deployment configuration
+# https://www.koyeb.com/docs
+
+name: na-travels-api
+
+services:
+  - name: api
+    type: web
+    git:
+      repository: github.com/YOUR_USERNAME/na-travels
+      branch: main
+    build:
+      builder: buildpack
+    run:
+      command: gunicorn app:create_app() --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+    ports:
+      - port: 8000
+        protocol: http
+    env:
+      - key: FLASK_ENV
+        value: production
+      # Set these in Koyeb dashboard as secrets:
+      # SECRET_KEY, MONGO_URI, JWT_SECRET_KEY
+      # MAIL_USERNAME, MAIL_PASSWORD
+      # GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+      # FRONTEND_URL, ADMIN_EMAIL, ADMIN_PASSWORD
+    health_checks:
+      - path: /health
+        port: 8000
